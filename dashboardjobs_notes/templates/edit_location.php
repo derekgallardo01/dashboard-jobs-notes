@@ -86,10 +86,18 @@
 							</span><span class="locvalue"><input type="text" name="7" value="<?php echo $details[7];?>"></span>
 							</div>
 
-<div class="row"><span class="subhead">Total # of Massage Hours: 
-							</span><span class="locvalue"><input type="text" name="30" value="<?php echo $total_time * $details[7];  //$details[30];?>"></span>
+<div class="row"><span class="subhead">Parking Instructions: 
+							</span><span class="locvalue"></span>
+							<textarea name="68" id="68" class="textarea small" aria-invalid="false" rows="5" cols="40"><?php echo $details[68];  //$details[30];?></textarea>
 							</div>
 
+<div class="row"><span class="subhead">Meet & Greet Information: 
+							</span><span class="locvalue"><textarea name="67" id="67" class="textarea small" aria-invalid="false" rows="5" cols="40"><?php echo $details[67];  //$details[30];?></textarea></span>
+							</div>
+
+							<div class="row"><span class="subhead">Documents: 
+							</span><span class="locvalue"><input type="file" name="66" value="<?php echo $details[66];?>"></span>
+							</div>
 
 <div class=""><input type="submit" name="update_location" id="update_location" value="Update Location" class="redbutton button" />
 <input type="hidden" class="gform" name="gform_lid" value="<?php echo $_GET["lid"];?>">      
