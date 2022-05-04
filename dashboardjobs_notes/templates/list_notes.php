@@ -125,12 +125,12 @@
 					<a href="admin.php?page=edit_location&lid=<?php echo $_GET["lid"]; ?>" class="mainlinkred" ><?php _e('EDIT EVENT DETAILS', $lang); ?></a>
 					</div>
 					<p></p>											<div>											
-					<a class="mainlinkred" href="admin.php?page=gf_entries&view=<?php echo $_GET["view"];?>&id=<?php echo $_GET["id"];?>&lid=<?php echo $_GET["lid"];?>&dir=<?php echo $_GET["dir"];?>&filter&paged=<?php echo $_GET["paged"];?>&pos=<?php echo $_GET["pos"];?>&field_id&operator&archive_one_location=yes&loid=<?php echo $_GET["lid"]; ?>"  onclick="return confirm('Do you want archive this location?')"><?php _e('ARCHIVE EVENT', $lang); ?></a></div> 											
+					<a class="mainlinkred" href="admin.php?page=gf_entries&view=<?php echo $_GET["view"];?>&id=<?php echo $_GET["id"];?>&lid=<?php echo $_GET["lid"];?>&leid=<?php echo $_GET["leid"];?>&dir=<?php echo $_GET["dir"];?>&filter&paged=<?php echo $_GET["paged"];?>&pos=<?php echo $_GET["pos"];?>&field_id&operator&archive_one_location=yes&loid=<?php echo $_GET["lid"]; ?>"  onclick="return confirm('Do you want archive this location?')"><?php _e('ARCHIVE EVENT', $lang); ?></a></div> 											
 					<p></p>											<div>											
-					<a class="mainlinkred" href="admin.php?page=gf_entries&view=<?php echo $_GET["view"];?>&id=<?php echo $_GET["id"];?>&lid=<?php echo $_GET["leid"];?>&dir=<?php echo $_GET["dir"];?>&filter&paged=<?php echo $_GET["paged"];?>&pos=<?php echo $_GET["pos"];?>&field_id&operator&delete_location=yes&loid=<?php echo $_GET["lid"]; ?>"  onclick="return confirm('Do you want delete this location?')" ><?php _e('DELETE EVENT', $lang); ?></a></div>
+					<a class="mainlinkred" href="admin.php?page=gf_entries&view=<?php echo $_GET["view"];?>&id=<?php echo $_GET["id"];?>&lid=<?php echo $_GET["lid"];?>&leid=<?php echo $_GET["leid"];?>&dir=<?php echo $_GET["dir"];?>&filter&paged=<?php echo $_GET["paged"];?>&pos=<?php echo $_GET["pos"];?>&field_id&operator&delete_location=yes&loid=<?php echo $_GET["lid"]; ?>"  onclick="return confirm('Do you want delete this location?')" ><?php _e('DELETE EVENT', $lang); ?></a></div>
 					
 					<p></p>											<div>											
-					<a class="mainlinkred" href="admin.php?page=gf_entries&view=entry&id=<?php echo $_GET["id"];?>&lid=<?php echo $_GET["leid"];?>&dir=DESC&filter&paged=1&pos=0&field_id&operator#box_manage_jobs"  ><?php _e('BACK', $lang); ?></a></div>
+					<a class="mainlinkred" href="admin.php?page=gf_entries&view=entry&id=<?php echo $_GET["id"];?>&lid=<?php echo $_GET["lid"];?>&leid=<?php echo $_GET["leid"];?>&dir=DESC&filter&paged=1&pos=0&field_id&operator#box_manage_jobs"  ><?php _e('BACK', $lang); ?></a></div>
 					
 				</div>
 				</div>
@@ -225,12 +225,10 @@ if(!empty($users_inviteds)){
 				}
 
 			} */
-		   
 			//echo $txt;//$therapist;
-
 		}
 		
-		echo '</td><td> &nbsp;&nbsp;&nbsp;&nbsp; <span class="selectedstat"><a href="admin.php?page=removeinvitedtherapist&id='.$id.'&lid='.$_GET["lid"].'"  onclick="return confirm(\'Do you want delete this therapist?\')"><img src="'.esc_url( plugins_url( 'Sign-Error-icon.png', dirname(__FILE__) ) ) .'" /></a></span>';
+		echo '</td><td> &nbsp;&nbsp;&nbsp;&nbsp; <span class="selectedstat"><a href="admin.php?page=removeinvitedtherapist&id='.$id.'&lid='.$_GET["lid"].'&view=entry&form_id='.$_GET["id"].'&leid='.$_GET["leid"].'&dir=DESC&filter&paged=1&pos=2"  onclick="return confirm(\'Do you want delete this therapist?\')"><img src="'.esc_url( plugins_url( 'Sign-Error-icon.png', dirname(__FILE__) ) ) .'" /></a></span>';
 		
 echo '</td></tr>';
 	}

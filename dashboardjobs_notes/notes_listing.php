@@ -545,7 +545,7 @@ if(isset($_GET["archive_note"])!='yes'){?>
 		$sql = "UPDATE ".$wpdb->prefix."job_location set users_invited = '".serialize($details)."' WHERE id=".$_GET["lid"];
 
         $wpdb->query( $sql );
-		echo("<script>location.href = 'admin.php?page=view_location&lid=".$_GET["lid"]."';</script>");
+		echo("<script>location.href = 'admin.php?page=view_location&lid=".$_GET["lid"]."&view=entry&id=".$_GET["form_id"]."&leid=".$_GET["leid"]."&dir=DESC&filter&paged=1&pos=2&field_id&operator';</script>");
 		die();
 	}
 	
