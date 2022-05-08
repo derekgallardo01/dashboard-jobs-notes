@@ -130,7 +130,7 @@
 					<a class="mainlinkred" href="admin.php?page=gf_entries&view=<?php echo $_GET["view"];?>&id=<?php echo $_GET["id"];?>&lid=<?php echo $_GET["lid"];?>&leid=<?php echo $_GET["leid"];?>&dir=<?php echo $_GET["dir"];?>&filter&paged=<?php echo $_GET["paged"];?>&pos=<?php echo $_GET["pos"];?>&field_id&operator&delete_location=yes&loid=<?php echo $_GET["lid"]; ?>"  onclick="return confirm('Do you want delete this location?')" ><?php _e('DELETE EVENT', $lang); ?></a></div>
 					
 					<p></p>											<div>											
-					<a class="mainlinkred" href="admin.php?page=gf_entries&view=entry&id=<?php echo $_GET["id"];?>&lid=<?php echo $_GET["lid"];?>&leid=<?php echo $_GET["leid"];?>&dir=DESC&filter&paged=1&pos=0&field_id&operator#box_manage_jobs"  ><?php _e('BACK', $lang); ?></a></div>
+					<a class="mainlinkred" href="admin.php?page=gf_entries&view=entry&id=<?php echo $_GET["id"];?>&lid=<?php echo $_GET["leid"];?>&leid=<?php echo $_GET["leid"];?>&dir=DESC&filter&paged=1&pos=0&field_id&operator#box_manage_jobs"  ><?php _e('BACK', $lang); ?></a></div>
 					
 				</div>
 				</div>
