@@ -74,7 +74,9 @@
 							</div>
 
 <div class="row"><span class="subhead">Total # of Massage Hours: 
-							</span><span class="locvalue"><?php echo $total_time * $details[7] ; //$details[30] * $details[7];?></span>
+							</span><span class="locvalue"><?php 
+							//echo $total_time * $details[7] ; 
+							echo $details[30] * $details[7];?></span>
 							</div>							
 
 <div class="row"><span class="subhead">Invited Therapist: 

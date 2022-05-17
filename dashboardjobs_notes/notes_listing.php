@@ -472,13 +472,8 @@ if(isset($_GET["archive_note"])!='yes'){?>
 		unset($data_location["date"]);
 		unset($data_location["time"]);
 		
-		$data_location = serialize($data_location);
 		/* print_r($data_location);
 		die(); */
-		
-		$sql = "UPDATE ".$wpdb->prefix."job_location set data = '".$data_location."' WHERE id=".$_POST["gform_lid"];
-
-        $wpdb->query( $sql );
 
 		if(is_array($_POST["date"])){
 			
@@ -489,17 +484,51 @@ if(isset($_GET["archive_note"])!='yes'){?>
 			foreach($_POST["date"] as $date){
 				
 			$sql1 = "INSERT INTO ".$wpdb->prefix."location_date_event set location_id = '".$_POST["gform_lid"]."', day = '".date('d',strtotime($date))."', month = '".date('m',strtotime($date))."', year = '".date('Y',strtotime($date))."', stime = '".$_POST["stime"][$i]."', etime = '".$_POST["etime"][$i]."' ";
-
+			
+			$sst = strtotime($_POST["stime"][$i] ).'<br />';
+			$eet=  strtotime($_POST["etime"][$i] );
+			$diff= $eet-$sst;
+			$timeElapsed += round((($diff/60) / 60), 2);
+			
+			
 			$wpdb->query( $sql1 );
 			$i++;
 			}
 			
 		}
 		
+		//print_r($timeElapsed);die();
+		
+		/*
+		$timeElapsed  = 0;
+		foreach($_POST["date"] as $date){
+			$StartTime= $_POST["input_58"][0].':'.$_POST["input_58"][1].' '.$_POST["input_58"][2];
+			$EndTime = $_POST["input_59"][0].':'.$_POST["input_59"][1].' '.$_POST["input_59"][2];
+			$StartTime= $_POST["input_64"];
+			$EndTime = $_POST["input_65"];
+			$sst = strtotime($StartTime);
+			$eet=  strtotime($EndTime);
+			$diff= $eet-$sst;
+			$timeElapsed += date("h.i",$diff);
+		}
+        //echo $timeElapsed;die();
+        */        
+        $data_location[30] = $timeElapsed;
+		
+		
+		$data_location = serialize($data_location);
+		
+		$sql = "UPDATE ".$wpdb->prefix."job_location set data = '".$data_location."' WHERE id=".$_POST["gform_lid"];
+
+        $wpdb->query( $sql );
+		
+		
+		
 		echo("<script>location.href = 'admin.php?page=view_location&lid=".$_POST["gform_lid"]."&view=entry&id=2&leid=".$lead_id."&dir=DESC&filter&paged=1&pos=2&field_id&operator';</script>");
 		die();
 		
 		}
+		
 		
 	
 		$args = array();
