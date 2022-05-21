@@ -490,12 +490,192 @@ if(isset($_GET["archive_note"])!='yes'){?>
 			$diff= $eet-$sst;
 			$timeElapsed += round((($diff/60) / 60), 2);
 			
+			$time_start = date('l jS \of F Y h:i:s A', strtotime($date." ".$_POST["stime"][$i]));
+			$time_end = date('l jS \of F Y h:i:s A', strtotime($date." ".$_POST["etime"][$i]));
 			
 			$wpdb->query( $sql1 );
 			$i++;
 			}
-			
 		}
+		
+		$data_location[30] = $timeElapsed;
+		
+		
+		$data_location = serialize($data_location);
+		
+		$sql = "UPDATE ".$wpdb->prefix."job_location set data = '".$data_location."' WHERE id=".$_POST["gform_lid"];
+
+        $wpdb->query( $sql );
+		
+
+			$headers  = "MIME-Version: 1.0" . "\r\n";
+			$headers .= "Content-type: text/html; charset=".get_bloginfo('charset')."" . "\r\n";
+			$headers .= "From: Ahh Thats The Spot Massage <".get_bloginfo('admin_email').">" . "\r\n";
+			
+			
+			$location_id = $_POST["gform_lid"];
+			
+			if($location_id>0){
+				
+				$sql_loc = "SELECT * FROM ".$wpdb->prefix."job_location WHERE status != 'archive' and status != 'delete' and ID=".$_POST["gform_lid"];
+
+				$locations = $wpdb->get_results($sql_loc);
+				if(!empty($locations)){
+					
+					$jobdata = maybe_unserialize($locations[0]->data);
+					//$users_inviteds = maybe_unserialize($locations[0]->users_invited);
+					//print_r($jobdata);die();
+					$status_accept = maybe_unserialize($locations[0]->accept_job);
+					
+					//print_r($status_accept);
+					if(!empty($status_accept)){
+						foreach($status_accept as $id=>$data) {
+						
+						$user = get_user_by('id', $id);
+						
+						$user->full_name = $user->first_name ? $user->first_name.($user->last_name ? ' '.$user->last_name : '') : null;
+						$email = $user->user_email;
+						$name = empty($user->full_name) ? ( empty($user->display_name) ? $email : $user->display_name) : $user->full_name;
+
+						//dev:lamprea: Added placeholders for userlogina dna userpass
+						$userlogin = $user->user_login;
+						$content_log .= "\n send mail to therapist -  ".$email;
+						$userpass = get_user_meta($user->ID, 'generated_random', true);
+						//".$data[8]." ".$data[9]." ".$data[51]." ".$data[10]."
+						
+						$content_for_therapist = "Dear ".$user->first_name.", we're sending you a friendly reminder for your event at ".((isset($jobdata[8]) && $jobdata[8]!='')?$jobdata[8]:'')." ".((isset($jobdata[9]) && $jobdata[9]!='')?$jobdata[9]:'')." ".((isset($jobdata[10]) && $jobdata[10]!='')?$jobdata[10]:'')." ".((isset($jobdata[51]) && $jobdata[51]!='')?$jobdata[51]:'')." , ".((isset($data[52]) && $data[52]!='')?$data[52]:$data[38])." will occur on ".$time_start." to ".$time_end.", for event details click <a href='".site_url('/my-events/')."'>here</a>.";
+						
+						$subject = 'Event Reminder';
+						
+						$therapistemail = array($email,'gpsbaroli@gmail','info@systork.com');
+						
+						$isSend = wp_mail($therapistemail, $subject, $content_for_therapist, $headers);
+						wp_mail('gpsbaroli@gmail', $subject, $content_for_therapist, $headers);
+						$isSend = wp_mail('info@systork.com', $subject, $content_for_therapist, $headers);
+						//Code for SMS
+						$message_sms = "Dear Admin, we're sending you a friendly reminder that your event will occur in ".$time_start." to ".$time_end;
+						
+						$to = get_user_meta($user->ID, 'mobile_phone_number', true);
+						if($to==''){
+							$to = get_user_meta($user->ID, 'phonenumber', true);
+						}
+						
+						if( !empty($to) && substr($to,0,1) != '+') {
+							$to = '+1'.$to;
+						}
+						$to = '+919610730117';
+						//echo $to;
+						//echo $message_sms;die();
+						Admin_Jobs::sendSMS($to,$message_sms);    
+						
+						
+						}
+					}
+					
+					////send email to content person
+					
+					$contact_email = $jobdata[44];
+					$contect_name = $jobdata[33]." ".$jobdata[49];
+					
+					//$customeremail = array('gsjpr7@gmail.com', 'info@systork.com');
+					///$isSend = wp_mail($customeremail, 'email user', 'email for user'.$eventowner_email, $headers);
+					
+					if($contact_email!=''){
+					$content_for_eventowner = "Dear ".$contect_name.", we're sending you a friendly reminder for your event at ".((isset($jobdata[8]) && $jobdata[8]!='')?$jobdata[8]:'')." ".((isset($jobdata[9]) && $jobdata[9]!='')?$jobdata[9]:'')." ".((isset($jobdata[10]) && $jobdata[10]!='')?$jobdata[10]:'')." ".((isset($jobdata[51]) && $jobdata[51]!='')?$jobdata[51]:'')." , ".((isset($data[52]) && $data[52]!='')?$data[52]:$data[38])." will occur on ".$time_start." to ".$time_end.", for event details click <a href='".site_url('/event-listing/')."'>here</a>.";
+						
+						$subject = 'Event Reminder';
+							$content_log .= "\n send mail to customer -  ".$eventowner_email;
+							$customeremail = array($contact_email,'gsjpr7@gmail.com', 'info@systork.com');
+							
+							$isSend = wp_mail($customeremail, $subject, $content_for_eventowner, $headers);
+							
+							//Code for SMS
+							$message_sms = "Dear ".$contect_name.", we're sending you a friendly reminder that your event will occur in ".$time_start." to ".$time_end;
+							
+							$to = $jobdata[34];
+							
+							if( !empty($to) && substr($to,0,1) != '+') {
+								$to = '+1'.$to;
+							}
+							//$to = '+919610730117';
+							//echo $message_sms;die();
+							//Admin_Jobs::sendSMS($to,$message_sms);    
+					}
+					
+					
+					
+					
+					////send email to event owner
+					
+					$eventowner_id	 = ($locations[0]->created_by);
+					
+					$eventowner = get_user_by('id', $eventowner_id);
+					
+					$eventowner->full_name = $eventowner->first_name ? $eventowner->first_name.($eventowner->last_name ? ' '.$eventowner->last_name : '') : null;
+					$eventowner_email = $eventowner->user_email;
+					$eventowner_name = empty($eventowner->full_name) ? ( empty($eventowner->display_name) ? $email : $eventowner->display_name) : $eventowner->full_name;
+					
+					//$customeremail = array('gsjpr7@gmail.com', 'info@systork.com');
+					///$isSend = wp_mail($customeremail, 'email user', 'email for user'.$eventowner_email, $headers);
+					
+					if($eventowner_email!=''){
+					$content_for_eventowner = "Dear ".$eventowner_name.", we're sending you a friendly reminder for your event at ".((isset($jobdata[8]) && $jobdata[8]!='')?$jobdata[8]:'')." ".((isset($jobdata[9]) && $jobdata[9]!='')?$jobdata[9]:'')." ".((isset($jobdata[10]) && $jobdata[10]!='')?$jobdata[10]:'')." ".((isset($jobdata[51]) && $jobdata[51]!='')?$jobdata[51]:'')." , ".((isset($data[52]) && $data[52]!='')?$data[52]:$data[38])." will occur on ".$time_start." to ".$time_end.", for event details click <a href='".site_url('/event-listing/')."'>here</a>.";
+						
+						$subject = 'Event Reminder';
+							$content_log .= "\n send mail to customer -  ".$eventowner_email;
+							$customeremail = array($eventowner_email,'gsjpr7@gmail.com', 'info@systork.com');
+							
+							$isSend = wp_mail($customeremail, $subject, $content_for_eventowner, $headers);
+							
+							//Code for SMS
+							$message_sms = "Dear ".$eventowner_name.", we're sending you a friendly reminder that your event will occur in ".$time_start." to ".$time_end;
+							
+							$to = get_user_meta($eventowner_id, 'mobile_phone_number', true);
+							if($to==''){
+								$to = get_user_meta($user->ID, 'phonenumber', true);
+							}
+							if( !empty($to) && substr($to,0,1) != '+') {
+								$to = '+1'.$to;
+							}
+							$to = '+919610730117';
+							//echo $message_sms;die();
+							//Admin_Jobs::sendSMS($to,$message_sms);    
+					}
+					
+					
+					
+					
+					
+					//Send email to site owner
+					$blogadmin = get_bloginfo('admin_email');
+					
+					if($blogadmin!=''){
+					$content_for_admin = "Dear Admin, we're sending you a friendly reminder that your event, ".((isset($data[52]) && $data[52]!='')?$data[52]:$data[38])." will occur on ".$time_start." to ".$time_end.", for event details click <a href='".site_url('/my-events/')."'>here</a>. ";
+						
+						
+						$subject = 'Event Reminder';
+							
+							$content_log .= "\n send mail to admin -  ".$blogadmin;
+							$isSend = wp_mail($blogadmin, $subject, $content_for_admin, $headers);
+							
+							//Code for SMS
+							$message_sms = "Dear Admin, we're sending you a friendly reminder that your event will occur in ".$time_start." to ".$time_end;
+							
+							/*$to = get_user_meta($user->ID, 'mobile_phone_number', true);
+							
+							if( !empty($to) && substr($to,0,1) != '+') {
+								$to = '+91'.$to;
+							}*/
+							$to = '+17862279815';
+							//echo $message_sms;die();
+							Admin_Jobs::sendSMS($to,$message_sms);    
+					}
+				}
+		/*//end location loop */
+			}
+		
+			
+		
 		
 		//print_r($timeElapsed);die();
 		
@@ -513,14 +693,7 @@ if(isset($_GET["archive_note"])!='yes'){?>
 		}
         //echo $timeElapsed;die();
         */        
-        $data_location[30] = $timeElapsed;
-		
-		
-		$data_location = serialize($data_location);
-		
-		$sql = "UPDATE ".$wpdb->prefix."job_location set data = '".$data_location."' WHERE id=".$_POST["gform_lid"];
-
-        $wpdb->query( $sql );
+        
 		
 		
 		
