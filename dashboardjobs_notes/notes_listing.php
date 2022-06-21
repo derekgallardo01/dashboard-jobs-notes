@@ -501,6 +501,44 @@ if(isset($_GET["archive_note"])!='yes'){?>
 		$data_location[30] = $timeElapsed;
 		
 		
+		
+		if(isset($_FILES[66]) && isset($_FILES[66]["name"])){
+			
+			$file_name = $_FILES['66']['name'];
+			$file_temp = $_FILES['66']['tmp_name'];
+
+			$upload_dir = wp_upload_dir();
+			$image_data = file_get_contents( $file_temp );
+			$filename = basename( $file_name );
+			$filetype = wp_check_filetype($file_name);
+			$filename = time().'.'.$filetype['ext'];
+
+			if ( wp_mkdir_p( $upload_dir['path'] ) ) {
+			  $file = $upload_dir['path'] . '/' . $filename;
+			}
+			else {
+			  $file = $upload_dir['basedir'] . '/' . $filename;
+			}
+
+			file_put_contents( $file, $image_data );
+			$wp_filetype = wp_check_filetype( $filename, null );
+			$attachment = array(
+			  'post_mime_type' => $wp_filetype['type'],
+			  'post_title' => sanitize_file_name( $filename ),
+			  'post_content' => '',
+			  'post_status' => 'inherit'
+			);
+
+			$attach_id = wp_insert_attachment( $attachment, $file );
+			require_once( ABSPATH . 'wp-admin/includes/image.php' );
+			$attach_data = wp_generate_attachment_metadata( $attach_id, $file );
+			wp_update_attachment_metadata( $attach_id, $attach_data );
+			$file_url = wp_get_attachment_url($attach_id);
+			$data_location[66] = (array($file_url));
+		}
+		
+		$sendemail = 0;
+		
 		$data_location = serialize($data_location);
 		
 		$sql = "UPDATE ".$wpdb->prefix."job_location set data = '".$data_location."' WHERE id=".$_POST["gform_lid"];
@@ -548,10 +586,11 @@ if(isset($_GET["archive_note"])!='yes'){?>
 						$subject = 'Event Reminder';
 						
 						$therapistemail = array($email,'gpsbaroli@gmail','info@systork.com');
-						
-						$isSend = wp_mail($therapistemail, $subject, $content_for_therapist, $headers);
-						wp_mail('gpsbaroli@gmail', $subject, $content_for_therapist, $headers);
-						$isSend = wp_mail('info@systork.com', $subject, $content_for_therapist, $headers);
+						if($sendemail){
+							$isSend = wp_mail($therapistemail, $subject, $content_for_therapist, $headers);
+							wp_mail('gpsbaroli@gmail', $subject, $content_for_therapist, $headers);
+							$isSend = wp_mail('info@systork.com', $subject, $content_for_therapist, $headers);
+						}
 						//Code for SMS
 						$message_sms = "Dear Admin, we're sending you a friendly reminder that your event will occur in ".$time_start." to ".$time_end;
 						
@@ -586,9 +625,9 @@ if(isset($_GET["archive_note"])!='yes'){?>
 						$subject = 'Event Reminder';
 							$content_log .= "\n send mail to customer -  ".$eventowner_email;
 							$customeremail = array($contact_email,'gsjpr7@gmail.com', 'info@systork.com');
-							
+							if($sendemail){
 							$isSend = wp_mail($customeremail, $subject, $content_for_eventowner, $headers);
-							
+							}
 							//Code for SMS
 							$message_sms = "Dear ".$contect_name.", we're sending you a friendly reminder that your event will occur in ".$time_start." to ".$time_end;
 							
@@ -624,9 +663,9 @@ if(isset($_GET["archive_note"])!='yes'){?>
 						$subject = 'Event Reminder';
 							$content_log .= "\n send mail to customer -  ".$eventowner_email;
 							$customeremail = array($eventowner_email,'gsjpr7@gmail.com', 'info@systork.com');
-							
+							if($sendemail){
 							$isSend = wp_mail($customeremail, $subject, $content_for_eventowner, $headers);
-							
+							}
 							//Code for SMS
 							$message_sms = "Dear ".$eventowner_name.", we're sending you a friendly reminder that your event will occur in ".$time_start." to ".$time_end;
 							
@@ -656,8 +695,9 @@ if(isset($_GET["archive_note"])!='yes'){?>
 						$subject = 'Event Reminder';
 							
 							$content_log .= "\n send mail to admin -  ".$blogadmin;
+							if($sendemail){
 							$isSend = wp_mail($blogadmin, $subject, $content_for_admin, $headers);
-							
+							}
 							//Code for SMS
 							$message_sms = "Dear Admin, we're sending you a friendly reminder that your event will occur in ".$time_start." to ".$time_end;
 							

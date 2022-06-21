@@ -97,24 +97,32 @@
 
 
 <div class="row"><span class="subhead">Parking Instructions: 
-							</span><span class="locvalue">
-
-							<textarea name="input_68" id="input_11_68" class="textarea small" aria-invalid="false" rows="5" cols="40"><?php echo $details[68];  //$details[30];?></textarea>
-
+							</span><span class="locvalue"><?php echo $details[68];  //$details[30];?>
 							</span>
 							</div>
 
 <div class="row"><span class="subhead">Meet & Greet Information: 
-							</span><span class="locvalue">
-
-							<textarea name="input_67" id="input_11_67" class="textarea small" aria-invalid="false" rows="5" cols="40"><?php echo $details[67];  //$details[30];?></textarea>
-
-
+							</span><span class="locvalue"><?php echo $details[67];  //$details[30];?>
 							</span>
 							</div>
 
 <div class="row"><span class="subhead">Documents: 
-							</span><span class="locvalue"><input type="file" name="66" value="<?php echo $details[66];  //$details[30];?>"></span>
+							</span><span class="locvalue">
+							<?php 
+							$files = $details[66];
+							if(is_array($files)){
+								$uploaded_files = $files;
+							}else{
+								$uploaded_files = json_decode($files);
+							}
+							
+							foreach($uploaded_files as $file){
+								?>
+								<a href="<?php echo $file ?>">Download</a> <br/>
+								<?php
+							}
+							?>
+							</span>
 							</div>
 
 </div>
